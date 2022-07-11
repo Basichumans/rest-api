@@ -19,10 +19,14 @@ class PostDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = serializers.PostSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]   #read only when not logged in, and logged in when logged in
    
+   
+
+   
+   
     def delete(self, request, *args, **kwargs):
         post = models.Post.objects.filter(pk=kwargs['pk'], user=request.user)
         if post.exists():
-            return self.destroy(request, *args, **kwargs)
+            return self.destroy(request, *args, **kwargs)                         
         else:
             raise ValidationError('You can only delete your own posts')
         
@@ -33,4 +37,9 @@ class PostDetail(generics.RetrieveUpdateDestroyAPIView):
         serializer.save(user=self.request.user)
             
 
-    
+    def put(self, request, *args, **kwargs):
+       post = models.Post.objects.filter(pk=kwargs['pk'], user=request.user)
+       if post.exists() or request.user.is_superuser:                        #  superuser, can edit any post
+           return self.update(request, *args, **kwargs)
+       else:
+           raise ValidationError('You can only update your own posts')
