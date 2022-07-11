@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'django.contrib.admin',
+    'quickstart',   #app name must to be for migrations
     'rest_framework',
     'django.contrib.auth',
     'django.contrib.contenttypes',
