@@ -43,3 +43,19 @@ class PostDetail(generics.RetrieveUpdateDestroyAPIView):
            return self.update(request, *args, **kwargs)
        else:
            raise ValidationError('You can only update your own posts')
+       
+       
+       
+class CommentList(generics.ListCreateAPIView):
+    # queryset = models.Comment.objects.all()
+    serializer_class = serializers.CommentSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]   #read only when not logged in, and logged in when logged in
+    
+    def perform_create(self, serializer):
+        post = models.Post.objects.get(pk=self.kwargs['pk'])            
+        serializer.save(user=self.request.user)
+        
+    
+    def get_queryset(self):
+        post = models.Post.objects.get(pk=self.kwargs['pk'])
+        return models.Comment.objects.filter(post=post)
